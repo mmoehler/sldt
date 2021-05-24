@@ -1,0 +1,90 @@
+= Simple Limited One Action Or DecisionTable
+:stem:
+:experimental: true
+:icons: font
+:sectnums:
+
+.Decision table - From Wikipedia, the free encyclopedia
+[quote, https://en.wikipedia.org/wiki/Decision_table]
+The limited-entry decision table is the simplest to describe. The condition alternatives are simple Boolean values, and the action entries are check-marks, representing which of the actions in a given column are to be performed.
+
+== The DecisionTable API
+[source, java]
+----
+public interface DecisionTable<T, R> extends Function<T, R> {
+  Indicators getIndicators();
+
+  Predicate<T>[] getConditions();
+
+  Function<T, R>[] getActions();
+
+  Optional<Function<T, R>> getElseAction();
+}
+----
+== Build a Decsion Table
+[source, java]
+----
+DecisionTable<Person, String> dt =
+    LimitedEntryDecisionTable.newBuilder()
+        .conditions(
+            (p) -> p.getName() != null,
+            (p) -> p.getSex() == Sex.MALE,
+            (p) -> p.getAge() > 0 && p.age <= 21)
+        .actions(
+            (p) -> p.getName() + " is a young boy",
+            (p) -> p.getName() + " is an adult man",
+            (p) -> p.getName() + " is a young girl",
+            (p) -> p.getName() + " is an adult woman")
+        .elseAction(
+            (p) -> {
+              throw new IllegalStateException("Unnamed person!");
+            })
+        .indicators(""
+            /* @formatter::off */
+                + "YYYY"
+                + "YYNN"
+                + "YNYN"
+                + "X---"
+                + "-X--"
+                + "--X-"
+                + "---X")
+            /* @formatter::on */
+        .build();
+----
+
+
+== Using Rules with multiple actions
+
+== Asynchronous Decision Table
+
+
+== A Usage sample
+[header, cols="1,5,1,1,1,1", width=75%]
+|===
+^|#|Conditions and Actions|R1|R2|R3|R4
+^|C01|Customer ordered from Christmas catalog.
+^|Y
+^|-
+^|N
+^|-
+^|C02|Customer ordered from specialty catalog.
+^|Y
+^|N
+^|Y
+^|-
+^|C03|Customer ordered $50 or more.
+^|Y
+^|Y
+^|Y
+^|N
+^|A01|Send out this year’s Christmas catalog.|
+^|X||
+^|A02|Send out specialty catalog.||
+^|X|
+^|A03|Send out both catalogs.
+^|X|||
+^|A04|Do not send out any catalog.|||
+^|X
+|===
+
+

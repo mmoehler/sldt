@@ -24,7 +24,7 @@ import com.mmoehler.sldt.intern.Indicator;
 
 import java.util.Comparator;
 
-import static com.mmoehler.sldt.utils.Checks.checkState;
+import static com.google.common.base.Preconditions.checkState;
 import static java.util.Arrays.binarySearch;
 import static java.util.Arrays.sort;
 
@@ -33,13 +33,9 @@ public final class Comparators {
 
   public static Comparator<Indicator[]> compareBySign() {
     return (l, r) -> {
-      checkState(l.length == r.length, "Different length of arrays to compare!");
-      int result = l.length - r.length;
-      if (0 != result) {
-        return result;
-      }
+      checkState (l.length == r.length, "Different length of arrays to compare!");
       for (var i = 0; i < l.length; i++) {
-        result = l[i].sign() - r[i].sign();
+        int result = l[i].sign() - r[i].sign();
         if (0 != result) {
           return result;
         }

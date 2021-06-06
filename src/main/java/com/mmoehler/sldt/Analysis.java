@@ -1,4 +1,4 @@
-package com.mmoehler.sldt.utils;
+package com.mmoehler.sldt;
 
 /*-
  * #%L
@@ -20,14 +20,15 @@ package com.mmoehler.sldt.utils;
  * #L%
  */
 
-public final class Checks {
+import java.util.Optional;
 
-    private Checks() {
-    }
+public interface Analysis {
 
-    public static void checkState(boolean condition, String message) {
-        if(!condition) {
-            throw new IllegalStateException(message);
-        }
-    }
+  boolean isSuccess();
+
+  boolean isFailure();
+
+  Optional<Exception> getCause();
+
+  Optional<String> getDetailInfo();
 }

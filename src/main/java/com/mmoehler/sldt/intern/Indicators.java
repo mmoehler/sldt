@@ -160,14 +160,12 @@ public class Indicators {
    * @return the string
    */
   public String internalState() {
-    final var sb = new StringBuilder("Indicators{");
-    sb.append("width=").append(width);
-    sb.append(", height=").append(height);
-    sb.append(", countOfConditions=").append(countOfConditions);
-    sb.append(", content=").append(java.util.Arrays.toString(indicators));
-    sb.append(", orientation=").append(orientation);
-    sb.append('}');
-    return sb.toString();
+    return "Indicators{" + "width=" + width +
+            ", height=" + height +
+            ", countOfConditions=" + countOfConditions +
+            ", content=" + Arrays.toString(indicators) +
+            ", orientation=" + orientation +
+            '}';
   }
 
   /**
@@ -204,6 +202,10 @@ public class Indicators {
       rows = ArrayUtils.partitioning(copy, width);
     }
     return rows.stream();
+  }
+
+  public Indicator[] row(int r) {
+    return Arrays.copyOfRange(indicators, r * width, r * width + width);
   }
 
   /**

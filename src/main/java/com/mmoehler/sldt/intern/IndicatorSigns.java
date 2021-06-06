@@ -40,4 +40,8 @@ public final class IndicatorSigns {
   /* @formatter:on */
 
   public static final String ALPHABET = "NY<>X≢*≠=-RC#~";
+
+  public static String asString(char... codes) {
+    return String.valueOf(codes);
+  }
 }

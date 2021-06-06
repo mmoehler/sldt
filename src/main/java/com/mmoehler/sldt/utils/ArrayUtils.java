@@ -20,6 +20,7 @@ package com.mmoehler.sldt.utils;
  * #L%
  */
 
+import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -43,7 +44,7 @@ public final class ArrayUtils {
   }
 
     public static <T> boolean contains(T[] array, T t) {
-      return stream(array).anyMatch(e -> e.equals(t));
+      return Arrays.asList(array).contains(t);
     }
 
     public static <T> boolean contains(T[] array, T t, Comparator<T> comparator) {

@@ -20,7 +20,7 @@ package com.mmoehler.sldt.analysis;
  * #L%
  */
 
-import com.mmoehler.sldt.Analysis;
+import com.mmoehler.sldt.Result;
 import com.mmoehler.sldt.Analyzer;
 import com.mmoehler.sldt.intern.Indicators;
 import org.junit.jupiter.api.AfterEach;
@@ -64,7 +64,7 @@ public class DefaultStructuralAnalysisTest {
             })
         .then(
             dt -> {
-              Analysis actual = actual();
+              Result actual = actual();
               assertThat(actual.isSuccess()).isTrue();
             })
         .call();
@@ -101,14 +101,43 @@ public class DefaultStructuralAnalysisTest {
             })
         .then(
             dt -> {
-              Analysis actual = actual();
+              Result actual = actual();
               assertThat(actual.isSuccess()).isTrue();
             })
         .call();
   }
 
-  //@Test
+  @Test
   @DisplayName("Check why this test fails!")
+  public void apply23() throws Exception {
+
+    of(analysis)
+        .given(Prepare.nothing())
+        .when(
+            a -> {
+              final Indicators indicators =
+                  Indicators.newBuilder()
+                      .countOfConditions(4)
+                      .width(4)
+                      .orientation(Indicators.Orientation.ROW)
+                      .content("" + "YYY-" + "-NNN" + "---N" + "YYNN" + "XXX-" + "X--X" + "-XX-")
+                      .build();
+              System.out.println(indicators);
+              actual(a.apply(indicators));
+              return a;
+            })
+        .then(
+            dt -> {
+              Result actual = actual();
+              assertThat(actual.isFailure()).isTrue();
+              final String message = actual.getCause().getMessage();
+              System.out.println(message);
+              actual.get();
+            })
+        .call();
+  }
+
+  //@Test
   public void apply1() throws Exception {
 
     of(analysis)
@@ -139,9 +168,9 @@ public class DefaultStructuralAnalysisTest {
             })
         .then(
             dt -> {
-              Analysis actual = actual();
+              Result actual = actual();
               assertThat(actual.isFailure()).isTrue();
-              System.out.println(actual.getDetailInfo().get());
+              System.out.println(actual.getCause().getMessage());
             })
         .call();
   }
@@ -167,7 +196,7 @@ public class DefaultStructuralAnalysisTest {
             })
         .then(
             dt -> {
-              Analysis actual = actual();
+              Result actual = actual();
               assertThat(actual.isSuccess()).isTrue();
             })
         .call();

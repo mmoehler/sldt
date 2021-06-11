@@ -29,7 +29,7 @@ import java.util.function.IntBinaryOperator;
 
 import static com.mmoehler.sldt.intern.IndicatorSigns.*;
 
-public interface Analyzer extends Function<Indicators, Analysis> {
+public interface Analyzer extends Function<Indicators, Result<String>> {
 
   SparseCharMatrix ACTION_COMPARISON =
       SparseCharMatrix.newBuilder()

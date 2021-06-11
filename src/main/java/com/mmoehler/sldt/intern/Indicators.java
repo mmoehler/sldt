@@ -149,7 +149,8 @@ public class Indicators {
 
   @Override
   public String toString() {
-    return rows()
+    final Indicator[] copy = copyOf(this.indicators, indicators.length);
+    return ArrayUtils.partitioning(copy, width).stream()
         .map(Arrays::toString)
         .collect(Collectors.joining(System.lineSeparator()));
   }
@@ -303,13 +304,20 @@ public class Indicators {
    * @return the indicators
    */
   public Indicators transpose() {
+
+    System.out.println("orientation = " + orientation);
+
     Orientation newOrientation =
         (orientation == Orientation.ROW) ? Orientation.COL : Orientation.ROW;
+
+    System.out.println("newOrientation = " + newOrientation);
 
     Comparator<Indicator> comparator =
         (newOrientation == Orientation.ROW) ? Comparators.rowFirstComparison() : Comparators.colFirstComparison();
 
     Indicator[] transposed = stream(indicators).sorted(comparator).toArray(Indicator[]::new);
+
+    System.out.println("transposed = " + Arrays.toString(transposed));
 
     return Indicators.newBuilder()
         .countOfConditions(countOfConditions)

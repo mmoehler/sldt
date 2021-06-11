@@ -87,4 +87,26 @@ DecisionTable<Person, String> dt =
 ^|X
 |===
 
+== Report Structural Analysis
+[Code]
+----
+java.lang.IllegalStateException:
+                           1 2 3 4
+STRUCTURE ANALYSIS RULE  1 . > - -
+STRUCTURE ANALYSIS RULE  2 . . * -
+STRUCTURE ANALYSIS RULE  3 . . . X
+-----------------------------------------------
+R   Redundancy
+C   Contradiction
+<   Inclusion
+>   Inclusion
+-   Exclusion
+X   Clash
+*   Compression Note
+-----------------------------------------------
+
+at com.mmoehler.sldt.analysis.DefaultAnalyzer.apply(DefaultAnalyzer.java:68)
+at com.mmoehler.sldt.analysis.DefaultAnalyzer.apply(DefaultAnalyzer.java:39)
+----
+
 

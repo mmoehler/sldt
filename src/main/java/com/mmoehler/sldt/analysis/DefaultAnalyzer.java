@@ -30,11 +30,14 @@ import com.mmoehler.sldt.utils.IntStreams;
 
 import java.util.Arrays;
 import java.util.OptionalInt;
+import java.util.Spliterator;
 import java.util.function.Function;
+import java.util.function.IntBinaryOperator;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
-import java.util.stream.Stream;
-import java.util.stream.Stream.Builder;
+import java.util.stream.StreamSupport;
+
+import static java.util.Spliterators.spliteratorUnknownSize;
 
 public class DefaultAnalyzer implements Analyzer {
 
@@ -61,48 +64,38 @@ public class DefaultAnalyzer implements Analyzer {
             .collect(Collectors.joining());
 
     // ... prepare the result.
-        return (Strings.isNullOrEmpty(result) || result.chars().allMatch(c -> c == IndicatorSigns.MI))
-            ? Result.success(result)
-            : Result.failure(
-                new IllegalStateException(
-                    AnalysisResultEmitter.INSTANCE.apply(result, indicators.getWidth())));
+    return (Strings.isNullOrEmpty(result) || result.chars().allMatch(c -> c == IndicatorSigns.MI))
+        ? Result.success(result)
+        : Result.failure(
+            new IllegalStateException(
+                AnalysisResultEmitter.INSTANCE.apply(result, indicators.getWidth())));
   }
 
   private final Function<Indicators, IntStream> processConditions =
-      conditions -> {
-        final Builder<int[]> outConditions = Stream.builder();
-        final Indicator[][] inConditions = conditions.cols().toArray(Indicator[][]::new);
-        for (int i = 0; i < inConditions.length - 1; i++) {
-          for (var j = i + 1; j < inConditions.length; j++) {
-            final IntStream leftStream = Arrays.stream(inConditions[i]).mapToInt(Indicator::sign);
-            final IntStream rightStream = Arrays.stream(inConditions[j]).mapToInt(Indicator::sign);
-            final int[] collected =
-                IntStreams.zip(leftStream, rightStream, combineConditions()).toArray();
-            outConditions.add(collected);
-          }
-        }
-        return outConditions
-            .build()
-            .map(c -> Arrays.stream(c).reduce(combineConditionCombinationResults()))
-            .mapToInt(OptionalInt::orElseThrow);
-      };
+      processIndicators(combineConditions(), combineConditionCombinationResults());
 
   private final Function<Indicators, IntStream> processActions =
-      actions -> {
-        final Builder<int[]> outActions = Stream.builder();
-        final Indicator[][] inActions = actions.cols().toArray(Indicator[][]::new);
-        for (var i = 0; i < inActions.length - 1; i++) {
-          for (var j = i + 1; j < inActions.length; j++) {
-            final IntStream leftStream = Arrays.stream(inActions[i]).mapToInt(Indicator::sign);
-            final IntStream rightStream = Arrays.stream(inActions[j]).mapToInt(Indicator::sign);
-            final int[] collected =
-                IntStreams.zip(leftStream, rightStream, combineActions()).toArray();
-            outActions.add(collected);
-          }
-        }
-        return outActions
-            .build()
-            .map(c -> Arrays.stream(c).reduce(combineActionCombinationResults()))
+      processIndicators(combineActions(), combineActionCombinationResults());
+
+  private Function<Indicators, IntStream> processIndicators(
+      IntBinaryOperator combineColumns, IntBinaryOperator combineColumnsCombinationResults) {
+
+    return indicators ->
+        StreamSupport.stream(
+                spliteratorUnknownSize(
+                    new CombinationIterator( // this iterator returns all possible column combinations
+                        indicators
+                            .cols()
+                            .map(col1 -> Arrays.stream(col1).mapToInt(Indicator::sign).toArray())
+                            .toArray(int[][]::new)),
+                    Spliterator.IMMUTABLE),
+                false)
+            .map( // combine the columns
+                combination ->
+                    IntStreams.zip(combination.getLeft(), combination.getRight(), combineColumns))
+            .map( // combine the column combination results
+                columnCombinationResults ->
+                    columnCombinationResults.reduce(combineColumnsCombinationResults))
             .mapToInt(OptionalInt::orElseThrow);
-      };
+  }
 }

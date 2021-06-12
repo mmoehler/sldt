@@ -64,12 +64,12 @@ public class Indicator {
 
   @Override
   public String toString() {
-    return String.format("%s(%02d:%02d)", String.valueOf(sign), row, col);
+    return String.format("%s(%02d:%02d)", sign, row, col);
   }
 
   //@Override
   public String toString1() {
-    return String.format("%s", String.valueOf(sign));
+    return String.format("%s", sign);
   }
 
   @Override

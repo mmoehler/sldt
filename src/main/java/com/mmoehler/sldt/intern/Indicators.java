@@ -294,31 +294,20 @@ public class Indicators {
     CompletableFuture.allOf(createConditionIndicators(map), createActionIndicators(map)).join();
   }
 
-  public Indicators canonicalize() {
-    return null;
-  }
-
   /**
    * Transpose indicators.
    *
    * @return the indicators
    */
   public Indicators transpose() {
-
-    System.out.println("orientation = " + orientation);
-
     Orientation newOrientation =
         (orientation == Orientation.ROW) ? Orientation.COL : Orientation.ROW;
-
-    System.out.println("newOrientation = " + newOrientation);
-
     Comparator<Indicator> comparator =
         (newOrientation == Orientation.ROW) ? Comparators.rowFirstComparison() : Comparators.colFirstComparison();
 
     Indicator[] transposed = stream(indicators).sorted(comparator).toArray(Indicator[]::new);
 
-    System.out.println("transposed = " + Arrays.toString(transposed));
-
+    //noinspection SuspiciousNameCombination
     return Indicators.newBuilder()
         .countOfConditions(countOfConditions)
         .width(height)

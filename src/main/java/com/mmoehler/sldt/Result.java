@@ -20,10 +20,7 @@ package com.mmoehler.sldt;
  * #L%
  */
 
-import com.google.common.collect.Sets;
-
 import java.util.Objects;
-import java.util.Set;
 
 public interface Result<T> {
 
@@ -41,6 +38,7 @@ public interface Result<T> {
 
   Throwable getCause();
 
+  @SuppressWarnings("UnusedReturnValue")
   T get();
 
   class Success<T> implements Result<T> {
@@ -112,6 +110,7 @@ public interface Result<T> {
   }
 
   static <T extends Throwable, R> R doThrow(Throwable throwable) throws T {
+    //noinspection unchecked
     throw (T) throwable;
   }
 }

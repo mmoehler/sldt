@@ -1,3 +1,6 @@
+// suppress inspection "SyntaxError" for whole file
+// suppress inspection "SyntaxError" for whole file
+// suppress inspection "SyntaxError" for whole file
 = Simple Limited One Action Or DecisionTable
 :stem:
 :experimental: true
@@ -21,10 +24,11 @@ public interface DecisionTable<T, R> extends Function<T, R> {
   Optional<Function<T, R>> getElseAction();
 }
 ----
-== Build a Decsion Table
+== Build a Decision Table
 [source, java]
 ----
-DecisionTable<Person, String> dt =
+DecisionTable<Person, String>
+dt =
     LimitedEntryDecisionTable.newBuilder()
         .conditions(
             (p) -> p.getName() != null,

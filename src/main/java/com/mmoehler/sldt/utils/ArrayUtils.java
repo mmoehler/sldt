@@ -20,14 +20,11 @@ package com.mmoehler.sldt.utils;
  * #L%
  */
 
-import java.util.Arrays;
-import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 import static java.util.Arrays.copyOfRange;
-import static java.util.Arrays.stream;
 
 public final class ArrayUtils {
   private ArrayUtils() {}
@@ -43,11 +40,4 @@ public final class ArrayUtils {
         .collect(Collectors.toList());
   }
 
-    public static <T> boolean contains(T[] array, T t) {
-      return Arrays.asList(array).contains(t);
-    }
-
-    public static <T> boolean contains(T[] array, T t, Comparator<T> comparator) {
-        return stream(array).anyMatch(e -> comparator.compare(t,e) == 0);
-    }
 }

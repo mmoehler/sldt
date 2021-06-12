@@ -83,12 +83,12 @@ public final class Tests<O> implements Callable<O> {
   }
 
   @Override
-  public O call() throws Exception {
+  public O call() {
     verification.accept(runTest());
     return object;
   }
 
-  private O runTest() throws Exception {
+  private O runTest() {
     return execution.apply(preparation.apply(object));
   }
 
@@ -101,7 +101,7 @@ public final class Tests<O> implements Callable<O> {
       System.out.println(">>> " + message);
       return t -> t;
     }
-    X apply(X x) throws Exception;
+    X apply(X x);
   }
 
   @FunctionalInterface
@@ -109,11 +109,11 @@ public final class Tests<O> implements Callable<O> {
     static <T> When<T> nothing() {
       return t -> t;
     }
-    X apply(X x) throws Exception;
+    X apply(X x);
   }
 
   @FunctionalInterface
   public interface Then<X> {
-    void accept(X x) throws Exception;
+    void accept(X x);
   }
 }

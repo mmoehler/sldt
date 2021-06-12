@@ -9,9 +9,9 @@ package com.mmoehler.sldt.analysis;
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -20,18 +20,16 @@ package com.mmoehler.sldt.analysis;
  * #L%
  */
 
-import com.mmoehler.sldt.Result;
 import com.mmoehler.sldt.Analyzer;
+import com.mmoehler.sldt.Result;
 import com.mmoehler.sldt.intern.Indicators;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 
 import static com.mmoehler.test.fixtures.Tests.*;
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class DefaultStructuralAnalysisTest {
+@SuppressWarnings("SpellCheckingInspection")
+class DefaultStructuralAnalysisTest {
 
   Analyzer analysis;
 
@@ -46,7 +44,7 @@ public class DefaultStructuralAnalysisTest {
   }
 
   @Test
-  public void apply() throws Exception {
+  void apply() throws Exception {
 
     of(analysis)
         .given(Prepare.nothing())
@@ -71,7 +69,7 @@ public class DefaultStructuralAnalysisTest {
   }
 
   @Test
-  public void apply0() throws Exception {
+  void apply0() throws Exception {
 
     of(analysis)
         .given(Prepare.nothing())
@@ -109,7 +107,7 @@ public class DefaultStructuralAnalysisTest {
 
   @Test
   @DisplayName("Check why this test fails!")
-  public void apply23() throws Exception {
+  void apply23() throws Exception {
 
     of(analysis)
         .given(Prepare.nothing())
@@ -132,13 +130,17 @@ public class DefaultStructuralAnalysisTest {
               assertThat(actual.isFailure()).isTrue();
               final String message = actual.getCause().getMessage();
               System.out.println(message);
-              actual.get();
+              Assertions.assertThrows(
+                  IllegalStateException.class,
+                  () -> {
+                    actual.get();
+                  });
             })
         .call();
   }
 
-  //@Test
-  public void apply1() throws Exception {
+  // @Test
+  void apply1() throws Exception {
 
     of(analysis)
         .given(Prepare.nothing())
@@ -176,7 +178,7 @@ public class DefaultStructuralAnalysisTest {
   }
 
   @Test
-  public void applyCleared1() throws Exception {
+  void applyCleared1() throws Exception {
 
     of(analysis)
         .given(Prepare.nothing())
@@ -203,7 +205,7 @@ public class DefaultStructuralAnalysisTest {
   }
 
   @Test
-  public void testDetectSplitIndex() {
+  void testDetectSplitIndex() {
     int width = 7;
     String s =
         "" + "NNYNNNN" + "NNNNNYY" + "NYNYYNN" + "YNNNNNN" + "NNNNYNY" + "NNNYN-N" + "NYNNYNN"

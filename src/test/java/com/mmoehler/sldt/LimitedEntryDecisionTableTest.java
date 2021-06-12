@@ -32,7 +32,7 @@ class LimitedEntryDecisionTableTest {
 
   enum Sex {
     MALE,
-    FEMALE;
+    FEMALE
   }
 
   static class Person {
@@ -59,6 +59,7 @@ class LimitedEntryDecisionTableTest {
     }
   }
 
+  @SuppressWarnings("SpellCheckingInspection")
   @BeforeAll
   public static void setupClass() {
     dt =

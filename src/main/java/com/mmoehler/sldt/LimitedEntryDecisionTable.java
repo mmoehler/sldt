@@ -41,6 +41,7 @@ public final class LimitedEntryDecisionTable<T, R> implements DecisionTable<T, R
    * This is a single decision action that essentially says that if any of the previous rules in
    * table were not triggered, than take this action(s)
    */
+  @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
   private final Optional<Function<T, R>> elseAction;
 
   private final int[] decisionMatrix;
@@ -113,7 +114,7 @@ public final class LimitedEntryDecisionTable<T, R> implements DecisionTable<T, R
   }
 
   private int getConditionTestResult(final T t) {
-    final CompletableFuture<Integer>[] futures =
+    @SuppressWarnings("unchecked") final CompletableFuture<Integer>[] futures =
         IntStream.range(0, conditions.length)
             .mapToObj(i -> CompletableFuture.supplyAsync(() -> conditions[i].test(t) ? 1 << i : 0))
             .toArray(CompletableFuture[]::new);

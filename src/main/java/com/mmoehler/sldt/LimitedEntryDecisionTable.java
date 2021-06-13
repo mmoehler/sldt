@@ -22,6 +22,7 @@ package com.mmoehler.sldt;
 
 import com.mmoehler.sldt.analysis.DefaultAnalyzer;
 import com.mmoehler.sldt.compress.Consolidator;
+import com.mmoehler.sldt.intern.IndicatorSigns;
 import com.mmoehler.sldt.intern.Indicators;
 
 import java.util.Arrays;
@@ -139,10 +140,12 @@ public final class LimitedEntryDecisionTable<T, R> implements DecisionTable<T, R
   // respected, since there are
   // dependencies between the individual initialization steps.
 
+  @SuppressWarnings("unchecked")
   interface Step01<I, O> {
     Step02<I, O> conditions(Predicate<I>... conditions);
   }
 
+  @SuppressWarnings("unchecked")
   interface Step02<I, O> {
     Step03<I, O> actions(Function<I, O>... actions);
   }
@@ -171,8 +174,8 @@ public final class LimitedEntryDecisionTable<T, R> implements DecisionTable<T, R
 
   static class Builder<I, O>
       implements Step01<I, O>, Step02<I, O>, Step03<I, O>, Step04<I, O>, Step05<I, O>, Step06<I, O>, Step07<I, O> {
-    private static final IntUnaryOperator mapToDecision = c -> c == 'Y' ? 1 : 0;
-    private static final IntUnaryOperator mapToMask = c -> c == '-' ? 0 : 1;
+    private static final IntUnaryOperator mapToDecision = c -> c == IndicatorSigns.YY ? 1 : 0;
+    private static final IntUnaryOperator mapToMask = c -> c == IndicatorSigns.MI ? 0 : 1;
 
     private Indicators indicators;
     private Predicate<I>[] conditions;

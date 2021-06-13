@@ -27,6 +27,7 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 
 public interface DecisionTable<T, R> extends Function<T, R> {
+
   Indicators getIndicators();
 
   Predicate<T>[] getConditions();

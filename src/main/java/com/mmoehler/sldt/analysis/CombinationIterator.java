@@ -9,9 +9,9 @@ package com.mmoehler.sldt.analysis;
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -25,6 +25,17 @@ import java.util.Iterator;
 import java.util.NoSuchElementException;
 import java.util.stream.IntStream;
 
+/**
+ * When the iterator is applied to the following array,
+ *
+ * <pre>[A,B,C,D]</pre>
+ *
+ * it returns, on one pass, the following result:
+ *
+ * <pre>[AB], [AC], [AD], [BC], [BD], [CD]</pre>
+ *
+ * Where <code>A..D</code> represent the columns of the matrix of indicators to be processed.
+ */
 class CombinationIterator implements Iterator<CombinationIterator.Combination> {
   private final int[][] content;
   private int i = 0;
@@ -42,23 +53,25 @@ class CombinationIterator implements Iterator<CombinationIterator.Combination> {
 
   @Override
   public Combination next() {
-    try {
-      if (hasNext()) return Combination.of(content[i], content[j]);
+    if (!hasNext()) {
       throw new NoSuchElementException();
-    } finally {
-      if (j == content.length - 1) {
-        i++;
-        j = i + 1;
-      } else {
-        j++;
-      }
-      l++;
     }
+    final Combination combination = Combination.of(content[i], content[j]);
+
+    if (j == content.length - 1) {
+      i++;
+      j = i + 1;
+    } else {
+      j++;
+    }
+    l++;
+
+    return combination;
   }
 
   @Override
   public void remove() {
-    throw new UnsupportedOperationException("IT.remove");
+    throw new UnsupportedOperationException("CombinationIterator.remove");
   }
 
   static class Combination {
@@ -84,11 +97,7 @@ class CombinationIterator implements Iterator<CombinationIterator.Combination> {
 
     @Override
     public String toString() {
-      return "{" +
-              Arrays.toString(left) +
-              "-" +
-              Arrays.toString(right) +
-              '}';
+      return "{" + Arrays.toString(left) + "-" + Arrays.toString(right) + '}';
     }
   }
 }

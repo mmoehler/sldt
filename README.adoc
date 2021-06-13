@@ -11,6 +11,9 @@
 [quote, https://en.wikipedia.org/wiki/Decision_table]
 The limited-entry decision table is the simplest to describe. The condition alternatives are simple Boolean values, and the action entries are check-marks, representing which of the actions in a given column are to be performed.
 
+The whole implementation is based on the information from the books 'Entscheidundtabellen-Technik'<<ehm>> and 'Entscheidungstabellentechnik: Grundlagen u. Anwendungsmoglichkeiten bei d. Gestaltung rechnergestutzter Informationssysteme'<<hst>>.
+
+
 == The DecisionTable API
 [source, java]
 ----
@@ -114,3 +117,15 @@ at com.mmoehler.sldt.analysis.DefaultAnalyzer.apply(DefaultAnalyzer.java:39)
 ----
 
 
+
+
+
+[bibliography]
+== References
+
+- [[[pp]]] Andy Hunt & Dave Thomas. The Pragmatic Programmer:
+From Journeyman to Master. Addison-Wesley. 1999.
+- [[[gof,2]]] Erich Gamma, Richard Helm, Ralph Johnson & John Vlissides. Design Patterns:
+Elements of Reusable Object-Oriented Software. Addison-Wesley. 1994.
+- [[[ehm]]] Erbesdobler, Heinemann, Mey. Entscheidungstabellen-Technik - Grundlagen und Anwendung von Entscheidungstabellen, Springer, 1976
+- [[[hst]]] Horst Strunz, Entscheidungstabellentechnik: Grundlagen u. Anwendungsmoglichkeiten bei d. Gestaltung rechnergestutzter Informationssysteme, Hanser, 1977

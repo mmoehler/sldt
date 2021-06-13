@@ -31,19 +31,15 @@ class AnalysisResultEmitterTest {
   @Test
   void testApply() {
     final String result = asString(GT, MI, MI, AS, MI, XX);
-    System.out.println(result);
     String message = (AnalysisResultEmitter.INSTANCE.apply(result, 4));
     Assertions.assertNotNull(message);
-    System.out.println(message);
 
   }
 
   @Test
   void testApplyOnEmptyResults() {
     final String result = asString(MI, MI, MI, MI, MI, MI);
-    System.out.println(result);
     String message = (AnalysisResultEmitter.INSTANCE.apply(result, 4));
     Assertions.assertNotNull(message);
-    System.out.println(message);
   }
 }

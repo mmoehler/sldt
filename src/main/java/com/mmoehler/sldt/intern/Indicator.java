@@ -62,13 +62,13 @@ public class Indicator {
     return sign == IndicatorSigns.MI;
   }
 
-  @Override
-  public String toString() {
+  //@Override
+  public String toString1() {
     return String.format("%s(%02d:%02d)", sign, row, col);
   }
 
-  //@Override
-  public String toString1() {
+  @Override
+  public String toString() {
     return String.format("%s", sign);
   }
 

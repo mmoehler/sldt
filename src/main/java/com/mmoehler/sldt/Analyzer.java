@@ -9,9 +9,9 @@ package com.mmoehler.sldt;
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -19,7 +19,6 @@ package com.mmoehler.sldt;
  * limitations under the License.
  * #L%
  */
-
 
 import com.mmoehler.sldt.intern.Indicators;
 import com.mmoehler.sldt.utils.SparseCharMatrix;
@@ -83,6 +82,33 @@ public interface Analyzer extends Function<Indicators, Result<String>> {
   SparseCharMatrix CONDITION_COMPARISON_RESULT =
       SparseCharMatrix.newBuilder()
           .indicators(ALPHABET)
+              /*
+          .put(EQ, EQ, EQ)
+          .put(EQ, LO, LO)
+          .put(EQ, GT, GT)
+          .put(EQ, NE, NE)
+
+          .put(LO, EQ, LO)
+          .put(LO, LO, LO)
+          .put(LO, GT, XX)
+          .put(LO, NE, NE)
+
+          .put(GT, EQ, GT)
+          .put(GT, LO, XX)
+          .put(GT, GT, GT)
+          .put(GT, NE, NE)
+
+          .put(NE, EQ, NE)
+          .put(NE, LO, NE)
+          .put(NE, GT, NE)
+          .put(NE, NE, NE)
+
+          .put(XX, EQ, XX)
+          .put(XX, LO, XX)
+          .put(XX, GT, XX)
+          .put(XX, NE, NE)
+*/
+
           .put(EQ, EQ, EQ)
           .put(EQ, LO, LO)
           .put(EQ, GT, GT)
@@ -109,7 +135,6 @@ public interface Analyzer extends Function<Indicators, Result<String>> {
           .put(NI, GT, NI)
           .build();
 
-
   default IntBinaryOperator combineActions() {
     return (left, right) -> ACTION_COMPARISON.get((char) left, (char) right);
   }
@@ -129,5 +154,4 @@ public interface Analyzer extends Function<Indicators, Result<String>> {
   default IntBinaryOperator combineAllCombinationResults() {
     return (left, right) -> COMBINATION_RESULT.get((char) left, (char) right);
   }
-
 }

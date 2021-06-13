@@ -45,6 +45,7 @@ public class Indicators {
   private final int width;
   private final int height;
   private final int countOfConditions;
+  private final int countOfActions;
   private final Indicator[] indicators;
   private final Orientation orientation;
 
@@ -71,6 +72,7 @@ public class Indicators {
     this.width = builder.width;
     this.height = builder.height;
     this.countOfConditions = builder.countOfConditions;
+    this.countOfActions = builder.countOfActions;
     this.indicators = builder.content;
     this.orientation = builder.orientation;
   }
@@ -112,6 +114,16 @@ public class Indicators {
   public int getCountOfConditions() {
     return countOfConditions;
   }
+
+  /**
+   * Gets count of actions.
+   *
+   * @return the count of conditions
+   */
+  public int getCountOfActions() {
+    return countOfActions;
+  }
+
 
   /**
    * Gets orientation.
@@ -164,6 +176,7 @@ public class Indicators {
     return "Indicators{" + "width=" + width +
             ", height=" + height +
             ", countOfConditions=" + countOfConditions +
+            ", countOfActions=" + countOfActions +
             ", content=" + Arrays.toString(indicators) +
             ", orientation=" + orientation +
             '}';
@@ -263,7 +276,7 @@ public class Indicators {
           actionIndicators =
               Indicators.newBuilder()
                   .countOfConditions(0)
-                  .width(width)
+                  .countOfActions(countOfActions)
                   .orientation(Orientation.ROW)
                   .content(content)
                   .build();
@@ -279,7 +292,7 @@ public class Indicators {
           conditionIndicators =
               Indicators.newBuilder()
                   .countOfConditions(countOfConditions)
-                  .width(width)
+                  .countOfActions(0)
                   .orientation(Orientation.ROW)
                   .content(content)
                   .build();
@@ -298,7 +311,9 @@ public class Indicators {
    * Transpose indicators.
    *
    * @return the indicators
+   * @deprecated use Indicators#cols() od Indicators#rows() instead
    */
+  @Deprecated
   public Indicators transpose() {
     Orientation newOrientation =
         (orientation == Orientation.ROW) ? Orientation.COL : Orientation.ROW;
@@ -310,7 +325,7 @@ public class Indicators {
     //noinspection SuspiciousNameCombination
     return Indicators.newBuilder()
         .countOfConditions(countOfConditions)
-        .width(height)
+        .countOfActions(countOfActions)
         .orientation(newOrientation)
         .content(transposed)
         .build();
@@ -333,10 +348,10 @@ public class Indicators {
     /**
      * Width step 03.
      *
-     * @param width the width
+     * @param count the count of actions
      * @return the step 03
      */
-    Step03 width(int width);
+    Step03 countOfActions(int count);
   }
 
   /** The interface Step 04. */
@@ -388,6 +403,7 @@ public class Indicators {
     private int height;
     private Indicator[] content;
     private int countOfConditions;
+    private int countOfActions;
     private Orientation orientation;
 
     @Override
@@ -398,6 +414,8 @@ public class Indicators {
 
     @Override
     public Step05 content(String data) {
+      this.height = countOfActions + countOfConditions;
+      this.width = data.length() / height;
       this.content =
           IntStream.range(0, data.length())
               .mapToObj(
@@ -407,20 +425,24 @@ public class Indicators {
                     return Indicator.of(data.charAt(i), row, col);
                   })
               .toArray(Indicator[]::new);
-      this.height = this.content.length / this.width;
       return this;
     }
 
     @Override
     public Step05 content(Indicator[] data) {
-      this.content = stream(data).toArray(Indicator[]::new);
-      this.height = this.content.length / this.width;
+      this.height = countOfActions + countOfConditions;
+      this.width = data
+              .length / height;
+
+      this.content = (orientation == Orientation.ROW)
+              ? stream(data).sorted(Comparators.rowFirstComparison()).toArray(Indicator[]::new)
+              : stream(data).sorted(Comparators.colFirstComparison()).toArray(Indicator[]::new);
       return this;
     }
 
     @Override
-    public Step03 width(int count) {
-      width = count;
+    public Step03 countOfActions(int count) {
+      countOfActions = count;
       return this;
     }
 

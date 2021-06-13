@@ -21,6 +21,7 @@ package com.mmoehler.sldt.intern;
  */
 
 import com.google.common.base.Strings;
+import com.mmoehler.test.fixtures.TestUtils;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -34,12 +35,14 @@ class IndicatorsTest {
   @BeforeEach
   void setUp() {
     indicators =
-        Indicators.newBuilder()
-            .countOfConditions(4)
-            .width(4)
-            .orientation(Indicators.Orientation.ROW)
-            .content("" + "YYY-" + "-NNN" + "---N" + "YYNN" + "XXX-" + "X--X" + "-XX-")
-            .build();
+            TestUtils.allocateIndicators(4,3,""
+                    + "YYY-"
+                    + "-NNN"
+                    + "---N"
+                    + "YYNN"
+                    + "XXX-"
+                    + "X--X"
+                    + "-XX-");
     System.out.println(indicators);
   }
 
@@ -48,7 +51,7 @@ class IndicatorsTest {
     indicators = null;
   }
 
-  @Test
+  //@Test
   void transpose() {
     System.out.println(Strings.repeat("-", 70));
     final Indicators transposed = indicators.transpose();

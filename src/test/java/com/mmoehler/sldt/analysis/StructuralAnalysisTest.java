@@ -23,6 +23,7 @@ package com.mmoehler.sldt.analysis;
 import com.mmoehler.sldt.Analyzer;
 import com.mmoehler.sldt.Result;
 import com.mmoehler.sldt.intern.Indicators;
+import com.mmoehler.test.fixtures.TestUtils;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -45,23 +46,21 @@ class StructuralAnalysisTest {
     analysis = null;
   }
 
-  @SuppressWarnings("SpellCheckingInspection")
   @Test
-  @DisplayName("Check why this test fails!")
-  void testAnalysis() throws Exception {
-
+  @DisplayName("Check Clash")
+  void testClash() throws Exception {
     of(analysis)
         .given(Prepare.nothing())
         .when(
             a -> {
               final Indicators indicators =
-                  Indicators.newBuilder()
-                      .countOfConditions(4)
-                      .width(4)
-                      .orientation(Indicators.Orientation.ROW)
-                      .content("" + "YYY-" + "-NNN" + "---N" + "YYNN" + "XXX-" + "X--X" + "-XX-")
-                      .build();
-              System.out.println(indicators);
+                  TestUtils.allocateIndicators(
+                      2,
+                      1,
+                      "-Y" //
+                          +"Y-" //
+                          + "XX" //
+                      );
               actual(a.apply(indicators));
               return a;
             })
@@ -69,12 +68,138 @@ class StructuralAnalysisTest {
             dt -> {
               Result actual = actual();
               Assertions.assertThat(actual.isFailure()).isTrue();
-              System.out.println(actual.getCause().getMessage());
               org.junit.jupiter.api.Assertions.assertThrows(
-                  IllegalStateException.class,
+                  AnalysisException.class,
                   () -> {
                     actual.get();
                   });
+                Assertions.assertThat(((AnalysisException)actual.getCause()).getRawResult()).isEqualTo("X");
             })
         .call();
-  }}
+  }
+
+    @Test
+    @DisplayName("Check Inclusion")
+    void testInclusion() throws Exception {
+        of(analysis)
+                .given(Prepare.nothing())
+                .when(
+                        a -> {
+                            final Indicators indicators =
+                                    TestUtils.allocateIndicators(
+                                            1,
+                                            1,
+                                            "-Y" //
+                                                    + "-X" //
+                                    );
+                            actual(a.apply(indicators));
+                            return a;
+                        })
+                .then(
+                        dt -> {
+                            Result actual = actual();
+                            Assertions.assertThat(actual.isFailure()).isTrue();
+                            org.junit.jupiter.api.Assertions.assertThrows(
+                                    AnalysisException.class,
+                                    () -> {
+                                        actual.get();
+                                    });
+                            Assertions.assertThat(((AnalysisException)actual.getCause()).getRawResult()).isEqualTo(">");
+                        })
+                .call();
+    }
+
+    @Test
+    @DisplayName("Check Exclusion")
+    void testExclusion() throws Exception {
+        of(analysis)
+                .given(Prepare.nothing())
+                .when(
+                        a -> {
+                            final Indicators indicators =
+                                    TestUtils.allocateIndicators(
+                                            1,
+                                            1,
+                                            "YN" //
+                                                    + "-X" //
+                                    );
+                            actual(a.apply(indicators));
+                            return a;
+                        })
+                .then(
+                        dt -> {
+                            Result actual = actual();
+                            Assertions.assertThat(actual.isSuccess()).isTrue();
+                            Assertions.assertThat(actual.get()).isEqualTo("-");
+                        })
+                .call();
+    }
+
+    @Test
+    @DisplayName("Check Compression Note")
+    void testCompressionNote() throws Exception {
+        of(analysis)
+                .given(Prepare.nothing())
+                .when(
+                        a -> {
+                            final Indicators indicators =
+                                    TestUtils.allocateIndicators(
+                                            1,
+                                            1,
+                                            "YN" //
+                                                    + "XX" //
+                                    );
+                            actual(a.apply(indicators));
+                            return a;
+                        })
+                .then(
+                        dt -> {
+                            Result actual = actual();
+                            Assertions.assertThat(actual.isFailure()).isTrue();
+                            org.junit.jupiter.api.Assertions.assertThrows(
+                                    AnalysisException.class,
+                                    () -> {
+                                        actual.get();
+                                    });
+                            Assertions.assertThat(((AnalysisException)actual.getCause()).getRawResult()).isEqualTo("*");
+                        })
+                .call();
+    }
+
+    @SuppressWarnings("SpellCheckingInspection")
+  @Test
+  @DisplayName("Check Inclusion, Compression Note, Clash")
+  void testMultipleIssues() throws Exception {
+    of(analysis)
+        .given(Prepare.nothing())
+        .when(
+            a -> {
+              final Indicators indicators =
+                  TestUtils.allocateIndicators(
+                      4,
+                      3,
+                      "" + "YYY-" //
+                          + "-NNN" //
+                          + "---N" //
+                          + "YYNN" //
+                          + "XXX-" //
+                          + "X--X" //
+                          + "-XX-" //
+                      );
+              actual(a.apply(indicators));
+              return a;
+            })
+        .then(
+            dt -> {
+              Result actual = actual();
+              Assertions.assertThat(actual.isFailure()).isTrue();
+                org.junit.jupiter.api.Assertions.assertThrows(
+                        AnalysisException.class,
+                        () -> {
+                            actual.get();
+                        });
+                Assertions.assertThat(((AnalysisException)actual.getCause()).getRawResult()).isEqualTo(">--*-X");
+            })
+        .call();
+  }
+}

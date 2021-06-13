@@ -20,6 +20,8 @@ package com.mmoehler.sldt;
  * #L%
  */
 
+import com.mmoehler.sldt.analysis.DefaultAnalyzer;
+import com.mmoehler.sldt.compress.Consolidator;
 import com.mmoehler.sldt.intern.Indicators;
 
 import java.util.Arrays;
@@ -154,11 +156,21 @@ public final class LimitedEntryDecisionTable<T, R> implements DecisionTable<T, R
   }
 
   interface Step05<I, O> {
+    Step06<I, O> enableCompression();
+    LimitedEntryDecisionTable<I, O> build();
+  }
+
+  interface Step06<I, O> {
+    Step07<I, O> enableStructuralCheck();
+    LimitedEntryDecisionTable<I, O> build();
+  }
+
+  interface Step07<I, O> {
     LimitedEntryDecisionTable<I, O> build();
   }
 
   static class Builder<I, O>
-      implements Step01<I, O>, Step02<I, O>, Step03<I, O>, Step04<I, O>, Step05<I, O> {
+      implements Step01<I, O>, Step02<I, O>, Step03<I, O>, Step04<I, O>, Step05<I, O>, Step06<I, O>, Step07<I, O> {
     private static final IntUnaryOperator mapToDecision = c -> c == 'Y' ? 1 : 0;
     private static final IntUnaryOperator mapToMask = c -> c == '-' ? 0 : 1;
 
@@ -167,6 +179,8 @@ public final class LimitedEntryDecisionTable<T, R> implements DecisionTable<T, R
     private Function<I, O>[] actions;
     private Function<I, O> elseAction;
     private String indicatorString;
+    private boolean compressionEnabled = false;
+    private boolean structuralCheckEnabled = false;
 
     private int[] decisionMatrix;
     private int[] maskMatrix;
@@ -198,14 +212,37 @@ public final class LimitedEntryDecisionTable<T, R> implements DecisionTable<T, R
     }
 
     @Override
+    public Step06<I, O> enableCompression() {
+      this.compressionEnabled = true;
+      return this;
+    }
+
+    @Override
+    public Step07<I, O> enableStructuralCheck() {
+      this.compressionEnabled = true;
+      return this;
+    }
+
+    @Override
     public LimitedEntryDecisionTable<I, O> build() {
-      this.indicators =
-          Indicators.newBuilder()
+      final Indicators tmp = Indicators.newBuilder()
               .countOfConditions(conditions.length)
-              .width(indicatorString.length() / (conditions.length + actions.length))
+              .countOfActions(actions.length)
               .orientation(Indicators.Orientation.ROW)
               .content(indicatorString)
               .build();
+
+      this.indicators = (compressionEnabled)
+              ? Consolidator.consolidate(tmp)
+              : tmp;
+
+      if(structuralCheckEnabled) {
+        final Result<String> result = new DefaultAnalyzer().apply(this.indicators);
+        if(result.isFailure()) {
+          result.get(); // in this case the transported exception which contains the description is thrown directly
+        }
+      }
+
       this.maskMatrix = createConditionMatrix(mapToMask);
       this.decisionMatrix = createConditionMatrix(mapToDecision);
       return new LimitedEntryDecisionTable<>(this);

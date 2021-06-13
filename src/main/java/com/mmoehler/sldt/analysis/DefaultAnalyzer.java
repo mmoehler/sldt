@@ -67,8 +67,8 @@ public class DefaultAnalyzer implements Analyzer {
     return (Strings.isNullOrEmpty(result) || result.chars().allMatch(c -> c == IndicatorSigns.MI))
         ? Result.success(result)
         : Result.failure(
-            new IllegalStateException(
-                AnalysisResultEmitter.INSTANCE.apply(result, indicators.getWidth())));
+            new AnalysisException(
+                AnalysisResultEmitter.INSTANCE.apply(result, indicators.getWidth()), result));
   }
 
   private final Function<Indicators, IntStream> processConditions =
@@ -83,7 +83,8 @@ public class DefaultAnalyzer implements Analyzer {
     return indicators ->
         StreamSupport.stream(
                 spliteratorUnknownSize(
-                    new CombinationIterator( // this iterator returns all possible column combinations
+                    new CombinationIterator( // this iterator returns all possible column
+                                             // combinations
                         indicators
                             .cols()
                             .map(col1 -> Arrays.stream(col1).mapToInt(Indicator::sign).toArray())

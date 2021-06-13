@@ -53,7 +53,7 @@ class DefaultStructuralAnalysisTest {
               final Indicators indicators =
                   Indicators.newBuilder()
                       .countOfConditions(3)
-                      .width(4)
+                      .countOfActions(4)
                       .orientation(Indicators.Orientation.ROW)
                       .content("" + "YYNN" + "-YYN" + "YN--" + "X---" + "-X--" + "--X-" + "---X")
                       .build();
@@ -78,7 +78,7 @@ class DefaultStructuralAnalysisTest {
               final Indicators indicators =
                   Indicators.newBuilder()
                       .countOfConditions(3)
-                      .width(8)
+                      .countOfActions(8)
                       .orientation(Indicators.Orientation.ROW)
                       .content(
                           ""
@@ -116,7 +116,7 @@ class DefaultStructuralAnalysisTest {
               final Indicators indicators =
                   Indicators.newBuilder()
                       .countOfConditions(4)
-                      .width(4)
+                      .countOfActions(3)
                       .orientation(Indicators.Orientation.ROW)
                       .content("" + "YYY-" + "-NNN" + "---N" + "YYNN" + "XXX-" + "X--X" + "-XX-")
                       .build();
@@ -131,7 +131,7 @@ class DefaultStructuralAnalysisTest {
               final String message = actual.getCause().getMessage();
               System.out.println(message);
               Assertions.assertThrows(
-                  IllegalStateException.class,
+                  AnalysisException.class,
                   () -> {
                     actual.get();
                   });
@@ -141,15 +141,15 @@ class DefaultStructuralAnalysisTest {
 
   // @Test
   void apply1() throws Exception {
+      of(analysis)
+              .given(Prepare.nothing())
+              .when(
+                      a -> {
+                          final Indicators indicators =
+                                  Indicators.newBuilder()
+                                          .countOfConditions(7)
 
-    of(analysis)
-        .given(Prepare.nothing())
-        .when(
-            a -> {
-              final Indicators indicators =
-                  Indicators.newBuilder()
-                      .countOfConditions(7)
-                      .width(8)
+                      .countOfActions(3)
                       .orientation(Indicators.Orientation.ROW)
                       .content(
                           ""
@@ -187,7 +187,7 @@ class DefaultStructuralAnalysisTest {
               final Indicators indicators =
                   Indicators.newBuilder()
                       .countOfConditions(7)
-                      .width(7)
+                      .countOfActions(3)
                       .orientation(Indicators.Orientation.ROW)
                       .content(
                           "" + "NNYNNNN" + "NNNNNYY" + "NYNYYNN" + "YNNNNNN" + "NNNNYNY" + "NNNYN-N"

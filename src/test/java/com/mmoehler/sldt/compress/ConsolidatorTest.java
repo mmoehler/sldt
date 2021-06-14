@@ -23,7 +23,6 @@ package com.mmoehler.sldt.compress;
 import com.mmoehler.sldt.Result;
 import com.mmoehler.sldt.analysis.AnalysisException;
 import com.mmoehler.sldt.analysis.DefaultAnalyzer;
-import com.mmoehler.sldt.intern.Indicator;
 import com.mmoehler.sldt.intern.Indicators;
 import com.mmoehler.test.fixtures.TestUtils;
 import org.assertj.core.api.Assertions;
@@ -31,8 +30,7 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.util.*;
-import java.util.stream.Collectors;
+import java.util.BitSet;
 
 public class ConsolidatorTest {
 

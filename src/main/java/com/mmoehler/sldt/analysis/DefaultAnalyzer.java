@@ -79,18 +79,14 @@ public class DefaultAnalyzer implements Analyzer {
       IntBinaryOperator combineColumns,
       IntBinaryOperator combineColumnsCombinationResults) {
 
-    return StreamSupport.stream(
-            spliteratorUnknownSize(
-                // this iterator returns all possible column  combinations
-                new CombinationIterator(prepareIndicators(indicators)), Spliterator.IMMUTABLE),
-            false)
-        .map( // combine the columns
-            combination ->
-                IntStreams.zip(combination.getLeft(), combination.getRight(), combineColumns))
-        .map( // combine the column combination results
-            columnCombinationResults ->
-                columnCombinationResults.reduce(combineColumnsCombinationResults))
-        .mapToInt(OptionalInt::orElseThrow);
+    return Combinations.of(prepareIndicators(indicators)).stream()
+            .map( // combine the columns
+                    combination ->
+                            IntStreams.zip(combination.getLeft(), combination.getRight(), combineColumns))
+            .map( // combine the column combination results
+                    columnCombinationResults ->
+                            columnCombinationResults.reduce(combineColumnsCombinationResults))
+            .mapToInt(OptionalInt::orElseThrow);
   }
 
   private int[][] prepareIndicators(Indicators indicators) {

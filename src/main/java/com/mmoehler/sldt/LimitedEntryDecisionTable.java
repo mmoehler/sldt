@@ -117,7 +117,8 @@ public final class LimitedEntryDecisionTable<T, R> implements DecisionTable<T, R
   }
 
   private int getConditionTestResult(final T t) {
-    @SuppressWarnings("unchecked") final CompletableFuture<Integer>[] futures =
+    @SuppressWarnings("unchecked")
+    final CompletableFuture<Integer>[] futures =
         IntStream.range(0, conditions.length)
             .mapToObj(i -> CompletableFuture.supplyAsync(() -> conditions[i].test(t) ? 1 << i : 0))
             .toArray(CompletableFuture[]::new);
@@ -160,11 +161,13 @@ public final class LimitedEntryDecisionTable<T, R> implements DecisionTable<T, R
 
   interface Step05<I, O> {
     Step06<I, O> enableCompression();
+
     LimitedEntryDecisionTable<I, O> build();
   }
 
   interface Step06<I, O> {
     Step07<I, O> enableStructuralCheck();
+
     LimitedEntryDecisionTable<I, O> build();
   }
 
@@ -173,7 +176,13 @@ public final class LimitedEntryDecisionTable<T, R> implements DecisionTable<T, R
   }
 
   static class Builder<I, O>
-      implements Step01<I, O>, Step02<I, O>, Step03<I, O>, Step04<I, O>, Step05<I, O>, Step06<I, O>, Step07<I, O> {
+      implements Step01<I, O>,
+          Step02<I, O>,
+          Step03<I, O>,
+          Step04<I, O>,
+          Step05<I, O>,
+          Step06<I, O>,
+          Step07<I, O> {
     private static final IntUnaryOperator mapToDecision = c -> c == IndicatorSigns.YY ? 1 : 0;
     private static final IntUnaryOperator mapToMask = c -> c == IndicatorSigns.MI ? 0 : 1;
 
@@ -228,30 +237,29 @@ public final class LimitedEntryDecisionTable<T, R> implements DecisionTable<T, R
 
     @Override
     public LimitedEntryDecisionTable<I, O> build() {
-      final Indicators tmp = Indicators.newBuilder()
+      final Indicators tmp =
+          Indicators.newBuilder()
               .countOfConditions(conditions.length)
               .countOfActions(actions.length)
               .orientation(Indicators.Orientation.ROW)
               .content(indicatorString)
               .build();
 
-      this.indicators = (compressionEnabled)
-              ? Consolidator.consolidate(tmp)
-              : tmp;
+      this.indicators = (compressionEnabled) ? Consolidator.consolidate(tmp) : tmp;
 
-      if(structuralCheckEnabled) {
-        final Result<String> result = new DefaultAnalyzer().apply(this.indicators);
-        if(result.isFailure()) {
-          result.get(); // in this case the transported exception which contains the description is thrown directly
-        }
+      if (structuralCheckEnabled) {
+        // id the result is a failure. the transported exception which contains a detailed error
+        // description is thrown here directly
+        new DefaultAnalyzer().apply(this.indicators).get();
       }
 
-      this.maskMatrix = createConditionMatrix(mapToMask);
-      this.decisionMatrix = createConditionMatrix(mapToDecision);
+      this.maskMatrix = createEvaluationMatrix(mapToMask);
+      this.decisionMatrix = createEvaluationMatrix(mapToDecision);
+
       return new LimitedEntryDecisionTable<>(this);
     }
 
-    private int[] createConditionMatrix(IntUnaryOperator op) {
+    private int[] createEvaluationMatrix(IntUnaryOperator op) {
       return this.indicators
           .cols()
           .mapToInt(

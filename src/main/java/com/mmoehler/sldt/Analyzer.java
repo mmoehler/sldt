@@ -82,33 +82,6 @@ public interface Analyzer extends Function<Indicators, Result<String>> {
   SparseCharMatrix CONDITION_COMPARISON_RESULT =
       SparseCharMatrix.newBuilder()
           .indicators(ALPHABET)
-              /*
-          .put(EQ, EQ, EQ)
-          .put(EQ, LO, LO)
-          .put(EQ, GT, GT)
-          .put(EQ, NE, NE)
-
-          .put(LO, EQ, LO)
-          .put(LO, LO, LO)
-          .put(LO, GT, XX)
-          .put(LO, NE, NE)
-
-          .put(GT, EQ, GT)
-          .put(GT, LO, XX)
-          .put(GT, GT, GT)
-          .put(GT, NE, NE)
-
-          .put(NE, EQ, NE)
-          .put(NE, LO, NE)
-          .put(NE, GT, NE)
-          .put(NE, NE, NE)
-
-          .put(XX, EQ, XX)
-          .put(XX, LO, XX)
-          .put(XX, GT, XX)
-          .put(XX, NE, NE)
-*/
-
           .put(EQ, EQ, EQ)
           .put(EQ, LO, LO)
           .put(EQ, GT, GT)
@@ -155,3 +128,4 @@ public interface Analyzer extends Function<Indicators, Result<String>> {
     return (left, right) -> COMBINATION_RESULT.get((char) left, (char) right);
   }
 }
+// moehler01: 54079df185986e2206d9dc2b421fd0aa9d129012

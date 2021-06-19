@@ -32,9 +32,9 @@ import org.junit.jupiter.api.Test;
 
 import java.util.BitSet;
 
-public class ConsolidatorTest {
+class ConsolidatorTest {
 
-  public static final String INDICATORS =
+  static final String INDICATORS =
       ""
           + "YNNNNNNN"
           + "NYYYNNNN"
@@ -50,24 +50,24 @@ public class ConsolidatorTest {
   Indicators allIndicators;
 
   @BeforeEach
-  public void setUp() throws Exception {
+  void setUp() throws Exception {
     allIndicators = TestUtils.allocateIndicators(7, 3, INDICATORS);
   }
 
   @AfterEach
-  public void tearDown() throws Exception {
+  void tearDown() throws Exception {
     allIndicators = null;
   }
 
   @Test
-  public void testConditionCompleteness() throws Exception {
+  void testConditionCompleteness() throws Exception {
     final BitSet ruleFlags = Consolidator.indicatorsComplete(allIndicators);
     Assertions.assertThat(ruleFlags.cardinality()).isEqualTo(7);
   }
 
 
   @Test
-  public void testConsolidateHappyDay() {
+  void testConsolidateHappyDay() {
     final Result<String> result = new DefaultAnalyzer().apply(allIndicators);
     org.junit.jupiter.api.Assertions.assertThrows(AnalysisException.class, result::get);
 

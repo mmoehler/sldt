@@ -231,7 +231,7 @@ public final class LimitedEntryDecisionTable<T, R> implements DecisionTable<T, R
 
     @Override
     public Step07<I, O> enableStructuralCheck() {
-      this.compressionEnabled = true;
+      this.structuralCheckEnabled = true;
       return this;
     }
 

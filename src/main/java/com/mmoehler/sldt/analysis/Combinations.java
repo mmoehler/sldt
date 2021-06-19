@@ -54,7 +54,7 @@ public class Combinations implements Iterable<Combination> {
         if (!hasNext()) {
           throw new NoSuchElementException();
         }
-        final Combination combination = Combination.of(columns[i], columns[j]);
+        final var combination = Combination.of(columns[i], columns[j]);
         if (j == columns.length - 1) {
           i++;
           j = i + 1;

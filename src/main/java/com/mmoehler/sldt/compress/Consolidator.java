@@ -37,9 +37,11 @@ import static com.mmoehler.sldt.intern.IndicatorSigns.*;
 
 public final class Consolidator {
 
+  private Consolidator() {
+    super();
+  }
+
   /**
-   *
-   *
    * <pre>
    * 1.
    * Prüfen, in welchen Bedingungszeilen alle Bedingungsanzeiger der betreffenden Bedingung
@@ -85,6 +87,7 @@ public final class Consolidator {
     // #2 Each condition must be configured with a full set of indicators because we're handle only
     //    Limmited decisin tables these are the indicators 'Y' and 'N'. If a condition does not
     //    fulfills this requrement it is ommitted from processing
+    // TODO
     final BitSet freeRows = indicatorsComplete(source);
 
     // #3 For easier access to the rules, transpose the given indicators
@@ -95,7 +98,7 @@ public final class Consolidator {
             .cols()
             .collect(
                 Collectors.groupingBy(
-                    (s) ->
+                    s ->
                         (Arrays.copyOfRange(
                             s,
                             countOfConditions,
@@ -128,7 +131,7 @@ public final class Consolidator {
       final ArrayList<Indicator[]> currentGroup = Lists.newArrayList(ruleGroup);
 
       // loop over the rule conditions
-      for (int loop = 0; loop < countOfConditions; loop++) {
+      for (var loop = 0; loop < countOfConditions; loop++) {
 
         // use a MultiMap as buffer for grouping the rules. The sort criteria of the
         // TreeMap depends on the current loop value
@@ -174,11 +177,12 @@ public final class Consolidator {
 
   static Comparator<Indicator[]> compareConditions(int condCount, int loopVar) {
     return (l, r) -> {
-      int ret = l.length - r.length, q = 0;
+      int ret = l.length - r.length;
+      var q = 0;
       if (ret != 0) {
         throw new IllegalStateException("Error inconsistent rule definitions");
       }
-      for (int k = 0; k < condCount; k++) {
+      for (var k = 0; k < condCount; k++) {
         if (k == loopVar) {
           continue;
         }
@@ -199,10 +203,10 @@ public final class Consolidator {
             .toArray(Indicator[][]::new);
 
     // we're using a bit set as marker container for the rows which fulfill the requirement
-    BitSet result = new BitSet(crows.length);
+    var result = new BitSet(crows.length);
 
     // initialize the bitset
-    for (int i = 0; i < crows.length; i++) {
+    for (var i = 0; i < crows.length; i++) {
 
       if (Arrays.stream(crows[i]).anyMatch(c -> c.sign() == YY)
           && Arrays.stream(crows[i]).anyMatch(c -> c.sign() == NN)) {

@@ -313,7 +313,7 @@ public class Indicators {
    * @return the indicators
    * @deprecated use Indicators#cols() od Indicators#rows() instead
    */
-  @Deprecated
+  @Deprecated(forRemoval = true)
   public Indicators transpose() {
     Orientation newOrientation =
         (orientation == Orientation.ROW) ? Orientation.COL : Orientation.ROW;
